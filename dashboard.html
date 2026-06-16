@@ -101,22 +101,22 @@
 </div>
 
 <script>
+    // Fungsi untuk menarik data dari API Flask server anda
     async function fetchLiveLogs() {
         try {
-            // Memanggil API live feed daripada server Flask
             const response = await fetch('http://localhost:5000/api/safety/live');
             if (!response.ok) throw new Error('Gagal mendapatkan respon dari server.');
             
-            const logs = await response.json();
+            const logs = await response.ok ? await response.json() : [];
             const tbody = document.getElementById('logsBody');
-            tbody.innerHTML = ''; 
+            tbody.innerHTML = ''; // Kosongkan jadual asal
 
             if (logs.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888;">Tiada rekod data dijumpai di dalam safety_logs.json.</td></tr>`;
                 return;
             }
 
-            // Susun data supaya log terbaharu berada di atas
+            // Susun data supaya data paling baru berada di bahagian atas sekali
             logs.reverse();
 
             logs.forEach(log => {
@@ -143,16 +143,16 @@
             document.getElementById('logsBody').innerHTML = `
                 <tr>
                     <td colspan="6" style="text-align: center; color: red; font-weight: bold;">
-                        Ralat: Pastikan server.py telah dijalankan pada Port 5000!
+                        Ralat: Pastikan python server.py telah dijalankan!
                     </td>
                 </tr>`;
         }
     }
 
-    // Panggil fungsi sebaik halaman dibuka
+    // Jalankan fungsi terus sebaik sahaja page dibuka
     fetchLiveLogs();
     
-    // Kemas kini secara automatik setiap 3 saat
+    // Set selang masa 3000ms (3 saat) untuk refresh data secara automatik
     setInterval(fetchLiveLogs, 3000);
 </script>
 
